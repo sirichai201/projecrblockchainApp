@@ -212,7 +212,7 @@ const handleErrors = (res, error) => {
 app.post('/createUser', async (req, res) => {
   // รับข้อมูลที่ส่งมาจาก client
   const { username, password, role } = req.body;
-  console.log('Received data:', req.body);
+  console.log('Received data:', req.body); //ดูค่าที่ส่งมายัง body 
 
   // ตรวจสอบว่า role มีค่าที่ถูกต้องหรือไม่
   if (role !== 'student' && role !== 'teacher' && role !== 'admin') {
