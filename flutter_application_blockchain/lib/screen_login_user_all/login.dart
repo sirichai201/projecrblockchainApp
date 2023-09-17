@@ -243,9 +243,9 @@ class Login extends StatelessWidget {
       "type": "function",
       "constant": true
     }
-  ]''', "0x8c19E132E767FdD2f2242370A8419b5072bf4e78"),
+  ]''', "0x4bCDFc2EbC91D05A6e4B0Cb4d3131650D2fE27e5"),
                         EthereumAddress.fromHex(
-                            "0x74c8F2f160Ad19C1B9F1b9D1a1d169c7CFe4Ab5A"));
+                            "0x2F397d0d71E51e1B90a05d1e14585814e03cE8A6"));
 
                     final authenticateFunction =
                         deployedContract.function("authenticate");

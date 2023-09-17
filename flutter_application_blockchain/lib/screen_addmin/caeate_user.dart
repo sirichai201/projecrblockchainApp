@@ -215,13 +215,13 @@ class _CreateUserState extends State<CreateUser> {
 
   _initializeWeb3() async {
     // ตั้งค่า Web3Client ด้วย endpoint ของ Ethereum node
-    _client = Web3Client("http://192.168.1.2:7545", http.Client());
+    _client = Web3Client("http://192.168.1.3:7545", http.Client());
 
     // สร้าง DeployedContract object โดยอ่าน ABI และ address ของสมาร์ทคอนแทร็กต์
     _contract = DeployedContract(
       ContractAbi.fromJson(
-          abiString, '0x8c19E132E767FdD2f2242370A8419b5072bf4e78'),
-      EthereumAddress.fromHex('0x74c8F2f160Ad19C1B9F1b9D1a1d169c7CFe4Ab5A'),
+          abiString, '0x4bCDFc2EbC91D05A6e4B0Cb4d3131650D2fE27e5'),
+      EthereumAddress.fromHex('0x2F397d0d71E51e1B90a05d1e14585814e03cE8A6'),
     );
 
     // ดึง function ที่ต้องการจากสมาร์ทคอนแทร็กต์
@@ -262,24 +262,52 @@ class _CreateUserState extends State<CreateUser> {
     );
   }
 
-  TextField buildUsernameField() {
-    return TextField(
-      controller: _usernameController,
-      decoration: const InputDecoration(
-        labelText: 'Username',
-      ),
-    );
-  }
+ TextField buildUsernameField() {
+  return TextField(
+    controller: _usernameController,
+    onChanged: (value) {
+      final specialCharacterPattern = RegExp(r'[!@#\$&*~]');
+      if (value.length < 5) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Username ต้องมีความยาวอย่างน้อย 5 ตัวอักษร')),
+        );
+      } else if (specialCharacterPattern.hasMatch(value)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Username ไม่ควรมีตัวอักษรพิเศษ')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Username โอเคแล้ว')),
+        );
+      }
+    },
+    decoration: const InputDecoration(
+      labelText: 'Username',
+    ),
+  );
+}
 
-  TextField buildPasswordField() {
-    return TextField(
-      controller: _passwordController,
-      obscureText: true,
-      decoration: const InputDecoration(
-        labelText: 'Password',
-      ),
-    );
-  }
+TextField buildPasswordField() {
+  return TextField(
+    controller: _passwordController,
+    onChanged: (value) {
+      if (value.length < 8) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Password ต้องมีความยาวอย่างน้อย 8 ตัวอักษร')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Password โอเคแล้ว')),
+        );
+      }
+    },
+    obscureText: true,
+    decoration: const InputDecoration(
+      labelText: 'Password',
+    ),
+  );
+}
+
 
   DropdownButton<String> buildDropdown() {
     return DropdownButton<String>(
@@ -319,7 +347,7 @@ class _CreateUserState extends State<CreateUser> {
         print('Sending data: $bodyData');
 
         final response = await http.post(
-          Uri.parse('http://192.168.1.2:3000/createUser'),
+          Uri.parse('http://192.168.1.3:3000/createUser'),
           body: bodyData,
         );
         print('Server response: ${response.body}');
