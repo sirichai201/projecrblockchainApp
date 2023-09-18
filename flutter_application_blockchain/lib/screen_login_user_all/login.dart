@@ -54,8 +54,10 @@ class Login extends StatelessWidget {
                     // Step 1: ตรวจสอบข้อมูลของ admin ก่อน
                     if (_usernameController.text == "test00" &&
                         _passwordController.text == "test00") {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => UserAdmin()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserLecturer()));
                       return;
                     }
 
@@ -64,191 +66,191 @@ class Login extends StatelessWidget {
                     final Web3Client client = Web3Client("", httpClient);
                     final deployedContract = DeployedContract(
                         ContractAbi.fromJson(''' [
-    {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [],
-      "name": "admin",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "name": "users",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "username",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "password",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "role",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_username",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_password",
-          "type": "string"
-        }
-      ],
-      "name": "authenticateAdmin",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_username",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_password",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_role",
-          "type": "string"
-        }
-      ],
-      "name": "createUser",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_username",
-          "type": "string"
-        }
-      ],
-      "name": "getUser",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "string",
-              "name": "username",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "password",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "role",
-              "type": "string"
-            }
-          ],
-          "internalType": "struct MyContractBlockchain.User",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_username",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_password",
-          "type": "string"
-        }
-      ],
-      "name": "authenticate",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_username",
-          "type": "string"
-        }
-      ],
-      "name": "checkUserRole",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    }
-  ]''', "0x4bCDFc2EbC91D05A6e4B0Cb4d3131650D2fE27e5"),
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "admin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "users",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "username",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "password",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "role",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_username",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_password",
+        "type": "string"
+      }
+    ],
+    "name": "authenticateAdmin",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_username",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_password",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_role",
+        "type": "string"
+      }
+    ],
+    "name": "createUser",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_username",
+        "type": "string"
+      }
+    ],
+    "name": "getUser",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "username",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "password",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "role",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct MyContractBlockchain.User",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_username",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_password",
+        "type": "string"
+      }
+    ],
+    "name": "authenticate",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_username",
+        "type": "string"
+      }
+    ],
+    "name": "checkUserRole",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  }
+]''', "0x05f889187f8C51DA898183feE7Fbd971BD69e711"),
                         EthereumAddress.fromHex(
-                            "0x2F397d0d71E51e1B90a05d1e14585814e03cE8A6"));
+                            "0x74c8F2f160Ad19C1B9F1b9D1a1d169c7CFe4Ab5A"));
 
                     final authenticateFunction =
-                        deployedContract.function("authenticate");
+                        deployedContract.function('authenticate');
                     try {
                       final authResponse = await client.call(
                         contract: deployedContract,
@@ -264,7 +266,7 @@ class Login extends StatelessWidget {
                       if (isAuthenticated) {
                         // Step 3: เรียก function checkUserRole
                         final roleFunction =
-                            deployedContract.function("checkUserRole");
+                            deployedContract.function('checkUserRole');
                         final roleResponse = await client.call(
                           contract: deployedContract,
                           function: roleFunction,

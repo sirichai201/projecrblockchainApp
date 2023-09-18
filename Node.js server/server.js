@@ -90,31 +90,32 @@ app.get('/fetch/users', async (req, res) => {
 
 
 
-// app.put('/changePassword', async (req, res) => {
-//     const { username, newPassword } = req.body;
-//     try {
-//         const result = await contract.methods.changePassword(username, newPassword).send({ from: OWNER_ADDRESS, gas: GAS_LIMIT, gasPrice: GAS_PRICE });
-//         res.send(result);
-//     } catch (error) {
-//         handleErrors(res, error);
-//     }
-// });
+app.put('/changePassword', async (req, res) => {
+    const { username, newPassword } = req.body;
+    try {
+        const result = await contract.methods.changePassword(username, newPassword).send({ from: OWNER_ADDRESS, gas: GAS_LIMIT, gasPrice: GAS_PRICE });
+        res.send(result);
+    } catch (error) {
+        handleErrors(res, error);
+    }
+});
 
-// app.post('/login', async (req, res) => {
-//     const { username, password } = req.body;
-//     try {
-//         const role = await contract.methods.login(username, password).call();
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const role = await contract.methods.login(username, password).call();
 
-//         // สร้าง token โดยใช้ username และ role เป็น payload
-//         const token = jwt.sign({ username, role }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        // สร้าง token โดยใช้ username และ role เป็น payload
+        const token = jwt.sign({ username, role }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
-//         res.send({ token });
-//     } catch (error) {
-//         handleErrors(res, error);
-//     }
-// });
+        res.send({ token });
+    } catch (error) {
+        handleErrors(res, error);
+    }
+});
 
 app.listen(port,'0.0.0.0',() =>{
 console.log('Server started on http://localhost:3000');
 });
 
+app.get
