@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,7 +24,7 @@ class _CreateUserState extends State<CreateUser> {
 
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  String _dropdownValue = 'นิสิต';
+  String _dropdownValue = 'student';
 
   final abiString = '''[
     {
@@ -38,6 +40,36 @@ class _CreateUserState extends State<CreateUser> {
           "internalType": "address",
           "name": "",
           "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "userList",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "password",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "role",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
@@ -123,14 +155,8 @@ class _CreateUserState extends State<CreateUser> {
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_username",
-          "type": "string"
-        }
-      ],
-      "name": "getUser",
+      "inputs": [],
+      "name": "getAllUsers",
       "outputs": [
         {
           "components": [
@@ -150,9 +176,9 @@ class _CreateUserState extends State<CreateUser> {
               "type": "string"
             }
           ],
-          "internalType": "struct MyContractBlockchain.User",
+          "internalType": "struct MyContractBlockchain.User[]",
           "name": "",
-          "type": "tuple"
+          "type": "tuple[]"
         }
       ],
       "stateMutability": "view",
@@ -215,12 +241,22 @@ class _CreateUserState extends State<CreateUser> {
 
   _initializeWeb3() async {
     // ตั้งค่า Web3Client ด้วย endpoint ของ Ethereum node
-    _client = Web3Client("http://192.168.1.2:7545", http.Client());
+    _client = Web3Client("http://10.0.2.2:7545", http.Client());
+
+    // กำหนดค่า _credentials ด้วย privateKey
+    // ignore: deprecated_member_use
+    _credentials = await _client.credentialsFromPrivateKey(
+        "58e5143c330b8486078304a7521a7557ccad0baf39efb396350f42e02f67665d");
+
+    if (_credentials == null) {
+      _showDialog(context,
+          'ท่านยังไม่ได้ทำการกำหนดค่า _credentials ซึ่งเป็นตัวรับ credentials สำหรับการทำ transaction บน blockchain');
+      return;
+    }
 
     // สร้าง DeployedContract object โดยอ่าน ABI และ address ของสมาร์ทคอนแทร็กต์
     _contract = DeployedContract(
-      ContractAbi.fromJson(
-          abiString, '0x8c19E132E767FdD2f2242370A8419b5072bf4e78'),
+      ContractAbi.fromJson(abiString, 'MyContractBlockchain'),
       EthereumAddress.fromHex('0x74c8F2f160Ad19C1B9F1b9D1a1d169c7CFe4Ab5A'),
     );
 
@@ -265,6 +301,23 @@ class _CreateUserState extends State<CreateUser> {
   TextField buildUsernameField() {
     return TextField(
       controller: _usernameController,
+      onChanged: (value) {
+        final specialCharacterPattern = RegExp(r'[!@#\$&*~]');
+        if (value.length < 5) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Username ต้องมีความยาวอย่างน้อย 5 ตัวอักษร')),
+          );
+        } else if (specialCharacterPattern.hasMatch(value)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Username ไม่ควรมีตัวอักษรพิเศษ')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Username โอเคแล้ว')),
+          );
+        }
+      },
       decoration: const InputDecoration(
         labelText: 'Username',
       ),
@@ -274,6 +327,18 @@ class _CreateUserState extends State<CreateUser> {
   TextField buildPasswordField() {
     return TextField(
       controller: _passwordController,
+      onChanged: (value) {
+        if (value.length < 8) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Password ต้องมีความยาวอย่างน้อย 8 ตัวอักษร')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Password โอเคแล้ว')),
+          );
+        }
+      },
       obscureText: true,
       decoration: const InputDecoration(
         labelText: 'Password',
@@ -290,7 +355,7 @@ class _CreateUserState extends State<CreateUser> {
           _dropdownValue = newValue!;
         });
       },
-      items: <String>['นิสิต', 'อาจารย์']
+      items: <String>['student', 'teacher']
           .map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -303,49 +368,44 @@ class _CreateUserState extends State<CreateUser> {
   ElevatedButton buildCreateButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        String role = _dropdownValue == 'นิสิต'
-            ? 'student'
-            : 'teacher'; // Convert Dropdown value to role string
+        try {
+          String role = _dropdownValue; // Simplified
 
-        final bodyData = {
-          'username': _usernameController.text,
-          'password': _passwordController.text,
-          'role': role,
-        };
-        print('Username: ${_usernameController.text}');
-        print('Password: ${_passwordController.text}');
-        print('Role: $_dropdownValue');
-        // ignore: avoid_print
-        print('Sending data: $bodyData');
+          final bodyData = {
+            'username': _usernameController.text,
+            'password': _passwordController.text,
+            'role': role,
+          };
 
-        final response = await http.post(
-          Uri.parse('http://192.168.1.2:3000/createUser'),
-          body: bodyData,
-        );
-        print('Server response: ${response.body}');
-
-        if (response.statusCode == 200) {
-          // Handle success
-          _showDialog(context, 'สร้างบัญชีสำเร็จ');
-
-          // Call Ethereum smart contract method after successful server response
-          // Make sure you handle any potential errors that can occur here
-          await _client.sendTransaction(
-            _credentials,
-            Transaction.callContract(
-              contract: _contract,
-              function: _createUserFunction,
-              parameters: [
-                _usernameController.text,
-                _passwordController.text,
-                role
-              ],
-              // Ensure you have proper gas and value settings for the transaction
-            ),
+          // Connect to your server
+          final response = await http.post(
+            Uri.parse('http://10.0.2.2:3000/createUser'),
+            body: bodyData,
           );
-        } else {
-          // Handle error
-          _showDialog(context, 'เกิดข้อผิดพลาด: ${response.body}');
+
+          if (response.statusCode == 200) {
+            _showDialog(context, 'สร้างบัญชีสำเร็จ');
+
+            // Call Ethereum smart contract method after successful server response
+            await _client.sendTransaction(
+              _credentials,
+              Transaction.callContract(
+                contract: _contract,
+                function: _createUserFunction,
+                parameters: [
+                  _usernameController.text,
+                  _passwordController.text,
+                  role
+                ],
+                // Ensure you have proper gas and value settings for the transaction
+              ),
+            );
+          } else {
+            // Handle error
+            _showDialog(context, 'เกิดข้อผิดพลาด: ${response.body}');
+          }
+        } catch (e) {
+          _showDialog(context, 'เกิดข้อผิดพลาด: $e');
         }
       },
       child: Text('สร้างบัญชี'),
