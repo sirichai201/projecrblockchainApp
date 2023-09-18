@@ -14,7 +14,7 @@ class _UserLecturerState extends State<UserLecturer> {
     {'code': '000011111', 'name': 'วิชาAAA', 'group': '2'},
     {'code': '000011111', 'name': 'วิชาที่BBB', 'group': '1'},
     {'code': '000011111', 'name': 'วิชาที่CCC', 'group': '3'},
-  ];
+  ]; ///////adadadadadadadadadada
 
   Future<bool?> _showDeleteConfirmationDialog(BuildContext context, int index) {
     return showDialog<bool>(
