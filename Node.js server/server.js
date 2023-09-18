@@ -8,6 +8,7 @@ const express = require('express');
 const Web3 = require('web3').Web3; // สำหรับบางเวอร์ชั่นของ web3
 const PRIVATE_KEY = "0x58e5143c330b8486078304a7521a7557ccad0baf39efb396350f42e02f67665d";
 console.log(PRIVATE_KEY);
+const jwt = require('jsonwebtoken');
 
 
 
@@ -18,9 +19,9 @@ app.use(bodyParser.json());  // สำหรับ request ที่ส่งเ
 app.use(bodyParser.urlencoded({ extended: true }));  // สำหรับ form submissions
 const port = 3000;
 const INFURA_URL = 'http://127.0.0.1:7545';
-const CONTRACT_ADDRESS = '0x05f889187f8C51DA898183feE7Fbd971BD69e711';
+const CONTRACT_ADDRESS = '0x47221a6d9eDD4773C3f4347ef14D3EF085Eda743';
 const contractABI = require('./contractABI.json');
-
+const SECRET_KEY  = ("58e5143c330b8486078304a7521a7557ccad0baf39efb396350f42e02f67665d")
 
   const web3 = new Web3(new Web3.providers.HttpProvider(INFURA_URL));
   const contract = new web3.eth.Contract(contractABI, CONTRACT_ADDRESS);
@@ -72,9 +73,9 @@ app.post('/createUser', async (req, res) => {
 
 
 
-app.get('/getSecretKey', (req, res) => {
-  res.json({ secretKey: process.env.SECRET_KEY });
-});
+// app.get('/getSecretKey', (req, res) => {
+//   res.json({ secretKey: process.env.SECRET_KEY });
+// });
 
 
 app.get('/fetch/users', async (req, res) => {
@@ -101,18 +102,57 @@ app.put('/changePassword', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const role = await contract.methods.login(username, password).call();
-
-        // สร้าง token โดยใช้ username และ role เป็น payload
-        const token = jwt.sign({ username, role }, process.env.SECRET_KEY, { expiresIn: '1h' });
-
-        res.send({ token });
-    } catch (error) {
-        handleErrors(res, error);
-    }
+  const { username, password } = req.body;
+  
+  console.log("Received request:", req.body);
+  
+  if (username == "Test00" && password == "Test00") {
+      console.log("Checking for admin...");
+      try {
+          const result = await contract.methods.authenticateAdmin(username, password).call();
+          
+          console.log('Contract response for admin:', result);
+          
+          if (result) {
+              console.log("Admin authentication successful!");
+              const token = jwt.sign({ username, role: 'admin' }, SECRET_KEY, { expiresIn: '1h' });
+              return res.json({ token, message: "Admin authenticated successfully!" });
+          } else {
+              console.warn("Admin authentication failed");
+              return res.status(401).json({ message: "Authentication failed for admin" });
+          }
+      } catch (error) {
+          console.error("Error during admin authentication:", error);
+          return handleErrors(res, error);
+      }
+  } else {
+      console.log("Checking for regular user...");
+      try {
+          const result = await contract.methods.authenticate(username, password).call();
+          
+          console.log('Contract response for user:', result);
+          
+          if (result) {
+              const role = await contract.methods.checkUserRole(username).call();
+              
+              console.log("User role:", role);
+              
+              const token = jwt.sign({ username, role }, SECRET_KEY, { expiresIn: '1h' });
+              return res.json({ token, message: `User ${username} with role ${role} authenticated successfully!` });
+          } else {
+              console.warn(`Authentication failed for user ${username}`);
+              return res.status(401).json({ message: `Authentication failed for user ${username}` });
+          }
+      } catch (error) {
+          console.error("Error during user authentication:", error);
+          return handleErrors(res, error);
+      }
+  }
 });
+
+
+
+
 
 app.listen(port,'0.0.0.0',() =>{
 console.log('Server started on http://localhost:3000');

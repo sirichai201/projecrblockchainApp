@@ -27,8 +27,9 @@ contract MyContractBlockchain {
     }
     
     function authenticateAdmin(string memory _username, string memory _password) public view returns(bool) {
-        return keccak256(abi.encodePacked(_username)) == keccak256(abi.encodePacked(adminUsername)) && keccak256(abi.encodePacked(_password)) == keccak256(abi.encodePacked(adminPassword));
-    }
+    return keccak256(abi.encodePacked(_username)) == keccak256(abi.encodePacked(adminUsername)) && keccak256(abi.encodePacked(_password)) == keccak256(abi.encodePacked(adminPassword));
+}
+
     
     function createUser(string memory _username, string memory _password, string memory _role) public onlyAdmin {
         require(bytes(users[_username].username).length == 0, "Username already exists");

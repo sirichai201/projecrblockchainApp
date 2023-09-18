@@ -49,6 +49,36 @@ class _CreateUserState extends State<CreateUser> {
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "userList",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "password",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "role",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
           "internalType": "string",
           "name": "",
           "type": "string"
@@ -125,14 +155,8 @@ class _CreateUserState extends State<CreateUser> {
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_username",
-          "type": "string"
-        }
-      ],
-      "name": "getUser",
+      "inputs": [],
+      "name": "getAllUsers",
       "outputs": [
         {
           "components": [
@@ -152,9 +176,9 @@ class _CreateUserState extends State<CreateUser> {
               "type": "string"
             }
           ],
-          "internalType": "struct MyContractBlockchain.User",
+          "internalType": "struct MyContractBlockchain.User[]",
           "name": "",
-          "type": "tuple"
+          "type": "tuple[]"
         }
       ],
       "stateMutability": "view",
